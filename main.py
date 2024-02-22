@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 
 app = FastAPI()
 
@@ -28,7 +28,10 @@ async def get_courses():
 
 @app.get('/courses/{id}')
 async def get_course(id: int):
-    return courses[id]
+    try:
+        return courses[id]
+    except KeyError:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Course Not Found')
 
 
 if __name__ == '__main__':
