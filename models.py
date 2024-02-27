@@ -7,3 +7,4 @@ class Course(BaseModel):
     title: str
     lessons: int
     hours: int
+    price: float
