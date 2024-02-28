@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, status
+from typing import Optional
+
+from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.responses import JSONResponse
 
 from models import Course
@@ -40,17 +42,17 @@ async def get_courses():
 
 @app.get('/courses/{id}')
 async def get_course(id: int):
+    idx = id - 1
     try:
-        return courses[id]
+        return courses[idx]
     except KeyError:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Course Not Found')
 
 
 @app.post('/courses', status_code=status.HTTP_201_CREATED)
 async def post_course(course: Course):
-    if course.title not in courses:
-        id = len(courses) + 1
-        courses[id] = course
+    if course.title is not None:
+        courses.append(course)
         del course.id
         return course
     else:
@@ -59,8 +61,9 @@ async def post_course(course: Course):
 
 @app.put('/courses/{id}')
 async def update_course(id: int, course: Course):
-    if id in courses:
-        courses[id] = course
+    idx = id - 1
+    if courses[idx]:
+        courses[idx] = course
         del course.id
         return course
     else:
@@ -69,12 +72,13 @@ async def update_course(id: int, course: Course):
 
 @app.delete('/courses/{id}')
 async def delete_course(id: int):
-    if id not in courses:
+    idx = id - 1
+    if not 0 <= idx < len(courses):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Course not exists')
-    course = courses[id]
-    del courses[id]
+    title = courses[idx]['title']
+    del courses[idx]
     return JSONResponse({
-        "msg": f"deleted {course['title']} with success",
+        "msg": f"deleted {title} with success",
         "status": status.HTTP_200_OK,
     }, status.HTTP_200_OK)
 
