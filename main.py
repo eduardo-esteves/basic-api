@@ -82,6 +82,12 @@ async def delete_course(id: int):
         "status": status.HTTP_200_OK,
     }, status.HTTP_200_OK)
 
+
+@app.get('/sum')
+async def sum(n1: int = Query(default=None, gt=0), n2: int = Query(default=None, ge=1), n3: Optional[int] = 0):
+    return {"result": (n1 + n2 + n3)}
+
+
 if __name__ == '__main__':
     import uvicorn
 
