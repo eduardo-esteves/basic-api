@@ -8,28 +8,6 @@ from models import Course
 
 app = FastAPI()
 
-courses = [
-    {
-        "title": "PHP Advanced",
-        "lessons": 112,
-        "hours": 58,
-        "price": 120.45,
-    },
-    {
-        "title": "Java How To Program",
-        "lessons": 87,
-        "hours": 67,
-        "price": 200.05,
-    },
-    {
-        "title": "Learn Python Programming",
-        "lessons": 65,
-        "hours": 50,
-        "price": 220.05,
-    },
-]
-
-
 @app.get('/test')
 async def test():
     return {"msg": "Route ok"}
@@ -37,7 +15,10 @@ async def test():
 
 @app.get('/courses')
 async def get_courses():
-    return courses
+    course = Course()
+    courses = course.get_courses()
+    dict_courses = course.courses_to_dict(courses)
+    return dict_courses
 
 
 @app.get('/courses/{id}')
